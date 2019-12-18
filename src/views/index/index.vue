@@ -15,25 +15,25 @@
     <el-container >     
          <el-aside width="auto" class="my-aside">
             <el-menu
-            default-active="2"
+            default-active="/index/user"
             class="el-menu-vertical-demo"
             :collapse="isCollapse"
             router
           >
           <!-- touter 属性可以让index变成path 切换路由地址 -->
-            <el-menu-item index="1">
+            <el-menu-item index="/index/chart">
               <i class="el-icon-menu"></i>
               <span slot="title">数据概览</span>
             </el-menu-item>
-             <el-menu-item index="2">
+             <el-menu-item index="/index/user">
               <i class="el-icon-menu"></i>
               <span slot="title">用户列表</span>
             </el-menu-item>
-             <el-menu-item index="3">
+             <el-menu-item index="/index/question">
               <i class="el-icon-menu"></i>
               <span slot="title">题库列表</span>
             </el-menu-item>
-             <el-menu-item index="4">
+             <el-menu-item index="/index/enterprise">
               <i class="el-icon-menu"></i>
               <span slot="title">企业列表</span>
             </el-menu-item>
