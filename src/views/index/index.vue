@@ -18,7 +18,9 @@
             default-active="2"
             class="el-menu-vertical-demo"
             :collapse="isCollapse"
+            router
           >
+          <!-- touter 属性可以让index变成path 切换路由地址 -->
             <el-menu-item index="1">
               <i class="el-icon-menu"></i>
               <span slot="title">数据概览</span>
@@ -35,7 +37,7 @@
               <i class="el-icon-menu"></i>
               <span slot="title">企业列表</span>
             </el-menu-item>
-             <el-menu-item index="5">
+             <el-menu-item index="/index/subject">
               <i class="el-icon-menu"></i>
               <span slot="title">学科列表</span>
             </el-menu-item>
