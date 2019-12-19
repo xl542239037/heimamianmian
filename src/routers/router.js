@@ -63,7 +63,9 @@ router.beforeEach((to, from, next) => {
       userInfo().then(res => {
         if (res.data.code == 200) {
           window.console.log(res);
-          store.state.userInfo = res.data.data;
+          // store.state.userInfo = res.data.data;
+          //commint 提交到仓库
+          store.commit('changeUserInfo',res.data.data);
           store.state.userInfo.avatar = process.env.VUE_APP_BASEURL + "/" + store.state.userInfo.avatar;
           next();
         } else if (res.data.code == 206) {

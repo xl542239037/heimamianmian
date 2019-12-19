@@ -7,8 +7,8 @@
         <span class="title">黑马面面</span>
       </div>
       <div class="right">
-        <img class="user-icon" :src="$store.state.userInfo.avatar" alt />
-        <span class="user-name">{{$store.state.userInfo.username}},您好</span>
+        <img class="user-icon" :src="userInfo.avatar" alt />
+        <span class="user-name">{{userInfo.username}},您好</span>
         <el-button type="primary" size="small" @click="exitIndex">退出</el-button>
       </div>
     </el-header>
@@ -89,6 +89,12 @@ export default {
         });
     }
   },
+  //计算属性 简化代码
+  computed:{
+    userInfo(){
+      return this.$store.state.userInfo
+    }
+  }
   // beforeCreate(){
   //   if (!getToken()) {
   //     this.$message.error('小样想伪造token');
