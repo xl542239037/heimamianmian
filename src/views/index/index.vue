@@ -7,8 +7,8 @@
         <span class="title">黑马面面</span>
       </div>
       <div class="right">
-        <img class="user-icon" src="../../assets/log.png" alt />
-        <span class="user-name">李达,您好</span>
+        <img class="user-icon" :src="active" alt />
+        <span class="user-name">{{name}},您好</span>
         <el-button type="primary" size="small">退出</el-button>
       </div>
     </el-header>
@@ -53,18 +53,34 @@
   </el-container>
 </template>
 <script>
+import { userInfo } from '../../api/user'
+import {getToken} from '../../utils/toke'
+// import {removeToken} from '../../utils/toke'
 export default {
   data() {
     return {
-      isCollapse:false
-  
+      isCollapse:false,
+      active:'',
+      name:''
     }
   },
   methods: {
     
   },
-  created(){
-    window.console.log(this.$route)
+  beforeCreate(){
+    if (!getToken()) {
+      this.$message.error('小样想伪造token');
+      this.$router.push('/login');
+    }
+  },
+   created() {
+     userInfo().then(res=>{
+       window.console.log(res);
+      //  if (res.data==200) {
+      //    this.active = res.data.data.avatar;
+      //    this.name = res.data.data.username;
+      //  }
+     })
   }
 };
 </script>

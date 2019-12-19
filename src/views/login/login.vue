@@ -8,6 +8,7 @@
         <span class="yonghu">用户登录</span>
       </div>
       <el-form :rules="rules" ref="form" :model="form">
+        <!-- 输入手机号 -->
         <el-form-item class="my-input" prop="phone">
           <el-input
             class="inpu"
@@ -16,7 +17,7 @@
             prefix-icon="el-icon-user"
           ></el-input>
         </el-form-item>
-
+        <!-- 输入密码 -->
         <el-form-item class="my-input" prop="password">
           <el-input
             class="inpu"
@@ -26,7 +27,7 @@
             prefix-icon="el-icon-lock"
           ></el-input>
         </el-form-item>
-
+        <!-- 验证码 -->
         <el-form-item class="my-input" prop="captcha">
           <el-row>
             <el-col :span="18">
@@ -42,18 +43,18 @@
             </el-col>
           </el-row>
         </el-form-item>
-
+        <!-- 用户协议 -->
         <el-form-item>
-          <el-checkbox name="type" v-model="form.type">
+          <el-checkbox v-model="form.checked">
             我已阅读并同意
             <el-link type="primary">用户协议</el-link>和
             <el-link type="primary">隐私条款</el-link>
           </el-checkbox>
         </el-form-item>
-
+        <!-- 按钮 -->
         <el-form-item>
           <el-button type="primary" @click="submitForm">登录</el-button>
-          <el-button type="primary" @click="dialogFormVisible = true">注册</el-button>
+          <el-button @click="dialogFormVisible = true" class="register-button" type="success">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -129,8 +130,8 @@
 
 <script>
 // import axios from "axios";
-import { login, sendsms, register } from "util";
-
+import { login, sendsms, register } from "../../api/login";
+import { setToken } from "../../utils/toke.js";
 export default {
   data() {
     var checkPhone = (rule, value, callback) => {
@@ -168,11 +169,14 @@ export default {
       }
     };
     return {
+      //登录的数据
       form: {
         phone: "",
         password: "",
-        captcha: ""
+        captcha: "",
+        checked: false
       },
+      //登录的数据判断
       rules: {
         // 手机号
         phone: [{ required: true, validator: checkPhone, trigger: "blur" }],
@@ -205,6 +209,7 @@ export default {
           }
         ]
       },
+      //注册是数据
       regForm: {
         phone: "",
         // 图片验证码
@@ -220,6 +225,7 @@ export default {
         //用户姓名
         username: ""
       },
+      //注册的数据输入框判断
       zhucerules: {
         // 手机号
         phone: [{ required: true, validator: checkPhone, trigger: "blur" }],
@@ -267,10 +273,15 @@ export default {
           }
         ]
       },
+      //登录的图像验证码
       captchaURL: process.env.VUE_APP_BASEURL + "/captcha?type=login",
+      //注册的图像验证码
       sendsms: process.env.VUE_APP_BASEURL + "/captcha?type=sendsms",
+      //关闭注册框
       dialogFormVisible: false,
+      //注册输入框的比例
       formLabelWidth: "70px",
+      //头像的地址
       imageUrl: "",
       //倒计时
       time: 0,
@@ -288,52 +299,48 @@ export default {
       } else {
         this.$refs.form.validate(valid => {
           if (valid) {
-            // 验证成功
-            // 调用接口
-            // axios({
-            //   url: process.env.VUE_APP_BASEURL + "/login",
-            //   method: "post",
-            //   // 设置跨域请求可以携带cookie
-            //   withCredentials: true,
-            //   data: {
-            //     phone: this.form.phone,
-            //     password: this.form.password,
-            //     code: this.form.captcha
-            //   }
-            // })
             login({
               phone: this.form.phone,
               password: this.form.password,
               code: this.form.captcha
             }).then(res => {
               window.console.log(res);
-              this.$message.error("登录成功");
+              // 错误提示
+              if (res.data.code === 202) {
+                this.$message.error(res.data.message);
+              } else if (res.data.code === 200) {
+                this.$message.success("你可算回来啦！");
+                // 这种不建议用 key可能会写错
+                // localStorage.setItem("token", res.data.data.token);
+                setToken(res.data.data.token);
+                this.$router.push("/index/subject");
+              }
             });
           } else {
-            // 验证失败
             this.$message.error("很遗憾，内容没有写对！");
-
             return false;
           }
         });
       }
     },
+    //登录图像验证
     changeCaptcha() {
       this.captchaURL =
         process.env.VUE_APP_BASEURL + "/captcha?type=login&" + Date.now(); // 时间戳
     },
+    //注册图像验证
     changesendsms() {
       this.sendsms =
         process.env.VUE_APP_BASEURL + "/captcha?type=sendsms&" + Date.now(); // 时间戳
     },
     //添加图像
     handleAvatarSuccess(res, file) {
-      // window.console.log(res);
       //生成的本地临时地址
       this.imageUrl = URL.createObjectURL(file.raw);
       //保存图像地址
       this.regForm.avatar = res.data.file_path;
     },
+    //上传图像大小和类型
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
@@ -402,13 +409,12 @@ export default {
           // })
           register({
             username: this.regForm.username,
-              phone: this.regForm.phone,
-              email: this.regForm.email,
-              avatar: this.regForm.avatar,
-              password: this.regForm.password,
-              rcode: this.regForm.rcode
-          })
-          .then(res => {
+            phone: this.regForm.phone,
+            email: this.regForm.email,
+            avatar: this.regForm.avatar,
+            password: this.regForm.password,
+            rcode: this.regForm.rcode
+          }).then(res => {
             window.console.log(res);
             if (res.data.code === 200) {
               this.$message.success("注册成功");
