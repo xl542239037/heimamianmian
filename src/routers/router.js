@@ -8,9 +8,10 @@ import user from '../views/index/user/user.vue'
 import question from '../views/index/question/question.vue'
 import enterprise from '../views/index/enterprise/enterprise.vue'
 import chart from '../views/index/chart/chart.vue'
-import { getToken,remove } from '../utils/toke'
+import { getToken, remove } from '../utils/toke'
 import { Message } from 'element-ui';
 import { userInfo } from '../api/user'
+import store from '../store/store'
 //注册 vue-router
 Vue.use(VueRouter)
 // 实例化
@@ -58,20 +59,21 @@ router.beforeEach((to, from, next) => {
     if (!getToken()) {
       Message.error('请先登录才能访问');
       next('/login');
-    }else {
-      userInfo().then(res=>{
-        if (res.data.code==200) {
+    } else {
+      userInfo().then(res => {
+        if (res.data.code == 200) {
           window.console.log(res);
-          
+          store.state.userInfo = res.data.data;
+          store.state.userInfo.avatar = process.env.VUE_APP_BASEURL + "/" + store.state.userInfo.avatar;
           next();
-        }else if(res.data.code==206){
+        } else if (res.data.code == 206) {
           Message.warning('小样想伪造token，滚回去');
           remove();
           next('/login');
         }
       })
     }
-  }else {
+  } else {
     next();
   }
 })

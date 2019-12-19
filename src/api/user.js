@@ -6,8 +6,7 @@ const instance = axios.create({
     // 跨域携带cookie
     withCredentials: true
   });
-
-
+//暴露获取用户信息接口
   export function userInfo(){
     return instance({
       url:'/info',
@@ -16,4 +15,13 @@ const instance = axios.create({
         token:getToken()
       }
     })
+  }
+  export function logout(){
+      return instance({
+          url:'/logout',
+          method:'get',
+          headers:{
+              token:getToken()
+          }
+      })
   }
