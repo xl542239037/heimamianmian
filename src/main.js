@@ -10,6 +10,8 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 //导入全局样式
 import './style/base.css'
+//运行moment 和全局过滤器
+import '../src/filters/filters'
 //注册到vue
 Vue.use(ElementUI);
 
